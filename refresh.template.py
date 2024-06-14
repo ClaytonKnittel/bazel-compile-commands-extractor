@@ -1113,12 +1113,16 @@ def _get_cpp_command_for_files(compile_action):
     # Android and Linux and grailbio LLVM toolchains: Fine as is; no special patching needed.
     compile_action.arguments = _all_platform_patch(compile_action.arguments)
 
-    source_files, header_files = _get_files(compile_action)
+    try:
+      source_files, header_files = _get_files(compile_action)
 
-    # Done after getting files since we may execute NVCC to get the files.
-    compile_action.arguments = _nvcc_patch(compile_action.arguments)
+      # Done after getting files since we may execute NVCC to get the files.
+      compile_action.arguments = _nvcc_patch(compile_action.arguments)
 
-    return source_files, header_files, compile_action.arguments
+      return source_files, header_files, compile_action.arguments
+
+    except AssertionError:
+      return [], [], []
 
 
 def _convert_compile_commands(aquery_output):
@@ -1150,6 +1154,9 @@ def _convert_compile_commands(aquery_output):
     # Yield as compile_commands.json entries
     header_files_already_written = set()
     for source_files, header_files, compile_command_args in outputs:
+        if not source_files and not header_files and not compile_command_args:
+          continue
+
         # Only emit one entry per header
         # This makes the output vastly smaller, since large size has been a problem for users.
         # e.g. https://github.com/insufficiently-caffeinated/caffeine/pull/577
