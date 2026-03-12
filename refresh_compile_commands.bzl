@@ -92,7 +92,7 @@ def refresh_compile_commands(
     _expand_template(name = script_name, labels_to_flags = targets, exclude_headers = exclude_headers, exclude_external_sources = exclude_external_sources, **kwargs)
 
     # Combine them so the wrapper calls the main script
-    native.py_binary(
+    py_binary(
         name = name,
         main = version_checker_script_name,
         srcs = [version_checker_script_name, script_name],
