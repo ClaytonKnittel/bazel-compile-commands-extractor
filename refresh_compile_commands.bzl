@@ -57,6 +57,7 @@ refresh_compile_commands(
 # Implementation
 
 load("@bazel_tools//tools/cpp:toolchain_utils.bzl", "find_cpp_toolchain")
+load("@rules_python//python:py_binary.bzl", "py_binary")
 
 
 def refresh_compile_commands(
